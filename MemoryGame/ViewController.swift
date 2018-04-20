@@ -14,6 +14,7 @@ class ViewController: UIViewController
     @IBOutlet weak var gameView: UIView!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var turnLabel: UILabel!
+    @IBOutlet weak var resetButton: UIButton!
     
     var tileWidth: CGFloat!
     
@@ -34,7 +35,10 @@ class ViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        resetButton.layer.cornerRadius = 15
         gameTimer = Timer()
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -85,7 +89,7 @@ class ViewController: UIViewController
                 tile.isUserInteractionEnabled = true
                 
                 tile.center = cen
-                tile.backgroundColor = UIColor.darkGray
+                tile.backgroundColor = UIColor(red: 255/255, green: 153/255, blue: 159/255, alpha: 1.0) /* #ff999f */
                 gameView.addSubview(tile)
                 
                 tilesArr.add(tile)
@@ -119,6 +123,7 @@ class ViewController: UIViewController
         {
             (anyTile as! MyLabel).text = "?"
             (anyTile as! MyLabel).matched = false
+            (anyTile as! MyLabel).flipped = false
         }
         
         curTime = 0
@@ -148,7 +153,7 @@ class ViewController: UIViewController
         {
             let thisTile: MyLabel = myTouch.view as! MyLabel
             
-            if !thisTile.matched
+            if !thisTile.matched && !thisTile.flipped
             {
                 UIView.transition(with: thisTile,
                                   duration: 0.75,
@@ -169,6 +174,7 @@ class ViewController: UIViewController
                     else
                     {
                         // only flip
+                        thisTile.flipped = true
                         self.firstTile = thisTile
                         self.compareState = true
                     }
@@ -188,7 +194,7 @@ class ViewController: UIViewController
                               options: UIViewAnimationOptions.transitionFlipFromRight,
                               animations: {
                                 thisTile.text = "👻"
-                                thisTile.backgroundColor = UIColor.green
+                                thisTile.backgroundColor = UIColor(red: 83/255, green: 204/255, blue: 42/255, alpha: 1.0) /* #53cc2a */
             }, completion: nil)
         }
     }
@@ -199,7 +205,7 @@ class ViewController: UIViewController
         turnLabel.text = String(self.turns)
         
         print("We have items: \(firstTile.tagNumber) and \(secondTile.tagNumber)")
-        if (firstTile.tagNumber == secondTile.tagNumber)
+        if firstTile.tagNumber == secondTile.tagNumber
         {
             matched += 1
             
@@ -237,14 +243,15 @@ class ViewController: UIViewController
         else
         {
             // they are different
+            firstTile.flipped = false
             UIView.transition(with: self.view,
                               duration: 0.75,
                               options: UIViewAnimationOptions.transitionCrossDissolve,
                               animations: {
                                 self.firstTile.text = "?"
                                 self.secondTile.text = "?"
-                                self.firstTile.backgroundColor = UIColor.darkGray
-                                self.secondTile.backgroundColor = UIColor.darkGray
+                                self.firstTile.backgroundColor = UIColor(red: 255/255, green: 153/255, blue: 159/255, alpha: 1.0) /* #ff999f */
+                                self.secondTile.backgroundColor = UIColor(red: 255/255, green: 153/255, blue: 159/255, alpha: 1.0) /* #ff999f */
             },
                               completion: nil)
         }
@@ -256,4 +263,5 @@ class MyLabel: UILabel
 {
     var tagNumber: Int!
     var matched: Bool = false
+    var flipped: Bool = false
 }
